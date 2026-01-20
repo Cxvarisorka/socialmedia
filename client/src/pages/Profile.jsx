@@ -6,7 +6,7 @@ import { usePost } from "../context/PostContext";
 
 const Profile = () => {
     const { user } = useAuth();
-    const { getUserPosts } = usePost();
+    const { getUserPosts, posts } = usePost();
 
     useEffect(() => {
         if (user) {
@@ -29,7 +29,7 @@ const Profile = () => {
 
             <div className="posts-section">
                 <h3 className="section-title">My Posts</h3>
-                <Posts />
+                <Posts refetchPosts={getUserPosts} />
             </div>
         </section>
     )
