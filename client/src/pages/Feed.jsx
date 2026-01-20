@@ -13,7 +13,7 @@ const Feed = () => {
         <section className="page-section">
             <h2 className="page-title">Feed</h2>
 
-            <Posts refetchPosts={getPosts} />
+            <Posts />
         </section>
     )
 };

@@ -29,7 +29,7 @@ const Profile = () => {
 
             <div className="posts-section">
                 <h3 className="section-title">My Posts</h3>
-                <Posts refetchPosts={getUserPosts} />
+                <Posts />
             </div>
         </section>
     )

@@ -73,7 +73,7 @@ export const PostProvider = ({ children }) => {
     };
 
     // Delete post
-    const deletePost = async (post, refetchCallback) => {
+    const deletePost = async (post) => {
         try {
             const res = await fetch(`${API_URL}/post/${post.id}/${user.id}`, {
                 method: 'DELETE'
@@ -85,12 +85,7 @@ export const PostProvider = ({ children }) => {
                 return;
             };
 
-            // Re-fetch appropriate data instead of using server response
-            if(refetchCallback) {
-                await refetchCallback();
-            } else {
-                setPosts(data);
-            }
+            setPosts(data);
             alert("Post deleted Successfully!");
         } catch(err) {
             console.log(err);
@@ -98,7 +93,7 @@ export const PostProvider = ({ children }) => {
     };
 
     // Edit post
-    const editPost = async (postId, data, refetchCallback) => {
+    const editPost = async (postId, data) => {
         try {
             const res = await fetch(`${API_URL}/post/${postId}/${user.id}`, {
                 method: 'PATCH',
@@ -115,12 +110,7 @@ export const PostProvider = ({ children }) => {
                 return;
             }
 
-            // Re-fetch appropriate data instead of using server response
-            if(refetchCallback) {
-                await refetchCallback();
-            } else {
-                setPosts(result);
-            }
+            setPosts(result);
             alert("Post changed succesfully!");
         } catch(err) {
             console.log(err);

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { usePost } from "../context/PostContext";
 
-const Posts = ({ refetchPosts }) => {
+const Posts = () => {
     const [postId, setPostId] = useState(null);
     const { posts, deletePost, editPost } = usePost();
     const { user } = useAuth();
@@ -16,7 +16,7 @@ const Posts = ({ refetchPosts }) => {
         };
 
         e.target.reset();
-        editPost(postId, data, refetchPosts);
+        editPost(postId, data);
         setPostId(null);
     }
 
@@ -50,7 +50,7 @@ const Posts = ({ refetchPosts }) => {
                                         {
                                             user.id === post.userId && (
                                                 <>
-                                                    <button onClick={() => deletePost(post, refetchPosts)}>Delete</button>
+                                                    <button onClick={() => deletePost(post)}>Delete</button>
                                                     <button onClick={() => setPostId(post.id)}>Edit</button>
                                                 </>
                                             )
