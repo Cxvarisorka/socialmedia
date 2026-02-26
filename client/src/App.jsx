@@ -1,33 +1,27 @@
-import { Route, Routes } from "react-router";
+import { Routes, Route } from 'react-router';
+import Shop from "./pages/Shop";
 import Nav from "./components/Nav";
-import Register from "./pages/Register";
-import Login from "./pages/Login";
-import Profile from "./pages/Profile";
-import ProtectedRoute from "./components/ProtectedRoute";
-import Feed from "./pages/Feed";
+import Product from "./pages/Product";
+import Home from "./pages/Home";
+import Signup from './pages/Signup';
+import Login from './pages/Login';
+import Profile from './pages/Profile';
 
-const App = () => {
+function App() {
+
   return (
     <>
       <Nav />
-    
-      <main className="main">
-        <Routes>
-          <Route path="/" element={
-            <section className="page-section home-hero">
-              <h2 className="home-title">Welcome to Social Media</h2>
-              <p className="home-subtitle">Connect with friends, share your thoughts, and discover what's happening around you.</p>
-            </section>
-          }/>
-          <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-          <Route path="/feed" element={<ProtectedRoute><Feed /></ProtectedRoute>} />
-        </Routes>
-      </main>
+      <Routes>
+        <Route path="/" element={<Home />}/>
+        <Route path="/signup" element={<Signup />}/>
+        <Route path="/login" element={<Login />}/>
+        <Route path="/profile" element={<Profile />}/>
+        <Route path="/products" element={<Shop />} />
+        <Route path="/products/:id" element={<Product />} />
+      </Routes>
     </>
-    
   )
-};
+}
 
-export default App;
+export default App

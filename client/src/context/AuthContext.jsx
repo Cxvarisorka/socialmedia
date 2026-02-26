@@ -1,86 +1,94 @@
-import { createContext, useState, useContext, useEffect } from "react";
+import { useState } from "react";
+import { createContext, useContext } from "react";
 import { useNavigate } from "react-router";
 
 const AuthContext = createContext();
 
-// Hook to use context value
 export const useAuth = () => useContext(AuthContext);
 
-// Constants
-const API_URL = 'http://localhost:3000/api';
+const API_URL = 'http://localhost:3000/api'
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
+    const [isReg, setIsReg] = useState(false);
     const navigate = useNavigate();
-
-    useEffect(() => {
-        const storedUser = JSON.parse(localStorage.getItem('user'));
-
-        if(!storedUser) return;
-
-        setUser(storedUser);
-        navigate('/profile');
-    }, []);
-
-    const register = async (user) => {
+    
+    const signup = async data => {
         try {
-            const res = await fetch(API_URL + '/auth/signup', {
+            const res = await fetch(`${API_URL}/auth/signup`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'content-type': 'application/json'
                 },
-                body: JSON.stringify(user)
+                body: JSON.stringify(data)
             });
 
-            const data = await res.json();
+            const result = await res.json();
 
             if(!res.ok) {
-                alert(data.message);
-                return;
+                throw new Error(result.message);
             }
 
-            alert(data.message);
-            navigate('/login');
+            alert(result.message);
+            setIsReg(true);
         } catch(err) {
-            console.log(err);
+            console.log(err.message)
         }
     };
 
-    const login = async (user) => {
+    const login = async data => {
         try {
-            const res = await fetch(API_URL + '/auth/login', {
+            const res = await fetch(`${API_URL}/auth/login`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'content-type': 'application/json'
                 },
-                body: JSON.stringify(user)
+                body: JSON.stringify(data)
             });
 
-            const data = await res.json();
+            const result = await res.json();
 
             if(!res.ok) {
-                alert(data.message);
-                return;
+                throw new Error(result.message);
             }
 
-            localStorage.setItem('user', JSON.stringify(data));
+            console.log(result)
 
-            setUser(data);
-            alert('Succesfully logged in!');
+            alert("User login is succes!");
+            setUser(result);
             navigate('/profile');
         } catch(err) {
-            console.log(err);
+            console.log(err.message)
         }
     };
 
-    const logout = () => {
-        setUser(null);
-        localStorage.removeItem('user');
-    }
+    const verifyEmail = async code => {
+        try {
+            const res = await fetch(`${API_URL}/auth/verify`, {
+                method: 'POST',
+                headers: {
+                    'content-type': 'application/json'
+                },
+                body: JSON.stringify({code})
+            });
+
+            const result = await res.json();
+
+            if(!res.ok) {
+                throw new Error(result.message);
+            }
+
+            alert(result.message);
+            setIsReg(false);
+            navigate('/login');
+        } catch(err) {
+            console.log(err.message);
+        }
+    };
 
     return (
-        <AuthContext.Provider value={{register, login, logout, user}}>
-            { children }
+        <AuthContext.Provider value={{signup, verifyEmail, login, user, isReg}}>
+            {children}
         </AuthContext.Provider>
     )
-}
+};

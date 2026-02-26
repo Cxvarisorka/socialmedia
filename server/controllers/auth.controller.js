@@ -1,52 +1,70 @@
-const { readFile, writeFile } = require("../utils/file");
-const path = require('path');
+const User = require("../models/user.model");
 
-const FILE_URL = path.join(__dirname, '../database/users.json');
+const signup = async (req, res) => {
+    const { name, email, password } = req.body;
 
-const signup = (req, res) => {
-    const { username, email, password } = req.body;
-
-    if(!username || !email || !password) {
-        return res.status(400).json({ message: "All data is required!" });
-    }
-
-    const users = readFile(FILE_URL);
-    const isExsist = users.find(user => user.email === email);
-
-    if(isExsist) {
-        return res.status(400).json({ message: "User already registered!" });
-    }
-
-    const user = {
-        username,
+    const newUser = await User.create({
+        name,
         email,
-        password,
-        id: Date.now()
-    };
+        password
+    });
 
-    writeFile(user, FILE_URL);
+    await newUser.sendVerificationCode();
 
-    res.status(201).send({ message: "User registered!" });
+    res.status(201).json({
+        message: 'User created successfully! please verify your email.'
+    });
 };
 
-const login = (req, res) => {
+const login = async (req, res) => {
     const { email, password } = req.body;
 
-    if(!email || !password) {
-        return res.status(400).json({ message: "All data is required!" });
-    }
-
-    const users = readFile(FILE_URL);
-    const user = users.find(u => u.email === email && u.password === password);
+    const user = await User.findOne({ email });
 
     if(!user){
-        return res.status(401).json({ message: "Credentials are incorrect!" })
+        return res.status(400).json({
+            message: 'email or password is incorrect'
+        });
+    };
+
+    if(!user.isVerified) {
+        return res.status(400).json({
+            message: 'Please verify your email'
+        });
     }
 
-    res.status(200).json({...user, password: undefined});
+    const isCorrect = await user.comparePassword(password);
+
+    if(!isCorrect){
+        return res.status(400).json({
+            message: 'email or password is incorrect'
+        });
+    };
+
+    user.password = undefined;
+
+    res.status(201).json(user);
 };
 
-module.exports = {
-    signup,
-    login
+const verifyEmail = async (req, res) => {
+    const { code } = req.body;
+
+    const user = await User.findOne({verificationCode: code});
+
+    if(!user) {
+        return res.status(404).json({
+            message: 'Code is incorrect or user dont exsist!'
+        });
+    }
+
+    user.verificationCode = undefined;
+    user.isVerified = true;
+
+    await user.save();
+
+    res.json({
+        message: "User is verified"
+    });
 }
+
+module.exports = { signup, login, verifyEmail };

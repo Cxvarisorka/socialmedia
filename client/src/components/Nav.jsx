@@ -1,32 +1,29 @@
-import { Link } from "react-router";
+import { Link } from "react-router"
 import { useAuth } from "../context/AuthContext";
 
 const Nav = () => {
-    const { user, logout } = useAuth();
-    return (
-        <header className="nav">
-            <div className="nav-container">
-                <h1 className="nav-logo">Social Media</h1>
-                <ul className="nav-links">
-                    <li className="nav-link"><Link to={'/'}>Home</Link></li>
+    const { user } = useAuth();
 
-                    {
-                        user ?  (
-                            <>
-                                <li className="nav-link"><Link to={'/profile'}>Profile</Link></li>
-                                <li className="nav-link"><Link to={'/feed'}>Feed</Link></li>
-                                <li className="nav-link" onClick={logout}>Logout</li>
-                            </>
-                        ) : (
-                            <>
-                                <li className="nav-link"><Link to={'/register'}>Register</Link></li>
-                                <li className="nav-link"><Link to={'/login'}>Login</Link></li>
-                            </>
-                        )
-                    }
-                </ul>
-            </div>
-        </header>
+    return (
+        <nav>
+            <ul>
+                <li><Link to={'/'}>Home</Link></li>
+                { 
+                    user ? (
+                        <>
+                            <li><Link to={'/products'}>Shop</Link></li>
+                            <li><Link to={'/profile'}>Profile</Link></li>
+                        </>
+                    ) : (
+                        <>
+                            <li><Link to={'/signup'}>Signup</Link></li>
+                            <li><Link to={'/login'}>Login</Link></li>
+                        </>
+                    )
+                }
+                
+            </ul>
+        </nav>
     )
 };
 
